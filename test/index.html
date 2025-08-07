@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptimAulas UNS - Sistema de Optimización de Aulas</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .navbar {
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #fff !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.9) 0%, rgba(155, 89, 182, 0.9) 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #229954);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-left: 5px solid var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-left-color: var(--accent-color);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .file-drop-zone {
+            border: 3px dashed #bdc3c7;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .file-drop-zone:hover {
+            border-color: var(--secondary-color);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .file-drop-zone.dragover {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--success-color), #2ecc71);
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        #fitnessChart {
+            max-height: 400px;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner-border {
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-university"></i> OptimAulas UNS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tutorial">Tutorial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#upload">Subir Datos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#results">Resultados</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#analysis">Análisis</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-brain"></i> OptimAulas UNS
+            </h1>
+            <p class="lead mb-4">
+                Sistema Inteligente de Optimización de Asignación de Aulas usando Algoritmos Evolutivos
+            </p>
+            <p class="fs-5 mb-5">
+                Resuelve automáticamente la distribución óptima de aulas para los cursos de Ingeniería de Sistemas e Informática - Universidad Nacional del Santa
+            </p>
+            <a href="#upload" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-rocket"></i> Comenzar Optimización
+            </a>
+            <a href="#tutorial" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-play-circle"></i> Ver Tutorial
+            </a>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-graduation-cap"></i> Tutorial - Cómo usar OptimAulas UNS
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="step-card card p-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="step-number me-3">1</div>
+                                    <h5 class="mb-0">Descargar Templates</h5>
+                                </div>
+                                <p class="text-muted">Descarga los archivos Excel de ejemplo para cursos y aulas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="step-card card p-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="step-number me-3">2</div>
+                                    <h5 class="mb-0">Completar Datos</h5>
+                                </div>
+                                <p class="text-muted">Llena los templates con tus cursos, aulas y disponibilidad horaria</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="step-card card p-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="step-number me-3">3</div>
+                                    <h5 class="mb-0">Subir Archivos</h5>
+                                </div>
+                                <p class="text-muted">Carga los archivos completados al sistema</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="step-card card p-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="step-number me-3">4</div>
+                                    <h5 class="mb-0">Optimizar y Descargar</h5>
+                                </div>
+                                <p class="text-muted">Ejecuta la optimización y descarga los resultados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Templates Section -->
+        <section class="mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-download"></i> Descargar Formatos de Archivos
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-4">Descarga los templates Excel para completar con tus datos</p>
+                    <button id="downloadTemplates" class="btn btn-warning btn-lg">
+                        <i class="fas fa-file-excel"></i> Descargar Templates Excel
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section id="upload" class="mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-upload"></i> Subir Archivos de Datos
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Archivo de Cursos (Excel)</label>
+                            <div class="file-drop-zone" id="cursosDropZone">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                <p>Arrastra el archivo de cursos aquí o haz clic para seleccionar</p>
+                                <input type="file" id="cursosFile" accept=".xlsx,.xls" style="display: none;">
+                                <div id="cursosFileName" class="mt-2 fw-bold text-success" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Archivo de Aulas (Excel)</label>
+                            <div class="file-drop-zone" id="aulasDropZone">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                <p>Arrastra el archivo de aulas aquí o haz clic para seleccionar</p>
+                                <input type="file" id="aulasFile" accept=".xlsx,.xls" style="display: none;">
+                                <div id="aulasFileName" class="mt-2 fw-bold text-success" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button id="uploadFiles" class="btn btn-primary btn-lg" disabled>
+                            <i class="fas fa-upload"></i> Cargar Datos y Optimizar
+                        </button>
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner-border spinner-border-lg" role="status">
+                                <span class="visually-hidden">Optimizando...</span>
+                            </div>
+                            <p class="mt-2">Ejecutando algoritmo evolutivo...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="mb-5" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-check-circle"></i> Resultados de la Optimización
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stats-card text-center">
+                                <div class="stats-number" id="totalAssignments">0</div>
+                                <div>Asignaciones</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card text-center">
+                                <div class="stats-number" id="conflictsCount">0</div>
+                                <div>Conflictos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card text-center">
+                                <div class="stats-number" id="bestFitness">0</div>
+                                <div>Mejor Fitness</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card text-center">
+                                <div class="stats-number" id="generations">0</div>
+                                <div>Generaciones</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <button id="downloadResult" class="btn btn-success btn-lg">
+                            <i class="fas fa-download"></i> Descargar Asignación Optimizada
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="resultsTable" class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Ciclo</th>
+                                    <th>Tipo</th>
+                                    <th>Estudiantes</th>
+                                    <th>Aula</th>
+                                    <th>Capacidad</th>
+                                    <th>Ubicación</th>
+                                    <th>Horario</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis" class="mb-5" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i> Análisis de la Evolución del Algoritmo
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="fitnessChart"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Estadísticas del Algoritmo</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Progreso de Optimización</label>
+                                <div class="progress">
+                                    <div id="optimizationProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Parámetros utilizados:</strong>
+                                <ul class="list-unstyled mt-2">
+                                    <li><i class="fas fa-users text-primary"></i> Población: 50 individuos</li>
+                                    <li><i class="fas fa-sync text-primary"></i> Generaciones: 100</li>
+                                    <li><i class="fas fa-random text-primary"></i> Mutación: 10%</li>
+                                    <li><i class="fas fa-exchange-alt text-primary"></i> Cruzamiento: 80%</li>
+                                </ul>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Métricas de calidad:</strong>
+                                <div class="mt-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Aulas Campus:</span>
+                                        <span id="campusAulas" class="fw-bold">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Aulas Externas:</span>
+                                        <span id="externalAulas" class="fw-bold">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Laboratorios:</span>
+                                        <span id="labAulas" class="fw-bold">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-university"></i> OptimAulas UNS</h5>
+                    <p class="mb-0">Sistema de optimización inteligente para la asignación de aulas</p>
+                    <p class="mb-0">Universidad Nacional del Santa - Ingeniería de Sistemas e Informática</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Desarrollado con:</p>
+                    <p class="mb-0">
+                        <i class="fab fa-python"></i> Python + Flask |
+                        <i class="fab fa-js-square"></i> JavaScript |
+                        <i class="fab fa-bootstrap"></i> Bootstrap
+                    </p>
+                    <p class="mb-0">Algoritmos Evolutivos para Optimización</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Bootstrap JS -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="js/sweetalert2.all.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/all.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Variables globales
+        let cursosFile = null;
+        let aulasFile = null;
+        let currentSolution = null;
+        let fitnessChart = null;
+
+        // URL del backend (cambiar por tu URL de Google Cloud Run)
+        const API_URL = 'https://your-backend-url.run.app';
+        // Para desarrollo local usar: const API_URL = 'http://localhost:8080';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFileUpload();
+            setupEventListeners();
+        });
+
+        // Configurar listeners de eventos
+        function setupEventListeners() {
+            // Botón de descarga de templates
+            document.getElementById('downloadTemplates').addEventListener('click', downloadTemplates);
+            
+            // Botón de upload
+            document.getElementById('uploadFiles').addEventListener('click', uploadAndOptimize);
+            
+            // Botón de descarga de resultados
+            document.getElementById('downloadResult').addEventListener('click', downloadResults);
+        }
+
+        // Configurar drag & drop para archivos
+        function initializeFileUpload() {
+            setupDropZone('cursosDropZone', 'cursosFile', (file) => {
+                cursosFile = file;
+                document.getElementById('cursosFileName').textContent = file.name;
+                document.getElementById('cursosFileName').style.display = 'block';
+                checkFilesReady();
+            });
+
+            setupDropZone('aulasDropZone', 'aulasFile', (file) => {
+                aulasFile = file;
+                document.getElementById('aulasFileName').textContent = file.name;
+                document.getElementById('aulasFileName').style.display = 'block';
+                checkFilesReady();
+            });
+        }
+
+        // Configurar zona de drop
+        function setupDropZone(dropZoneId, fileInputId, onFileSelect) {
+            const dropZone = document.getElementById(dropZoneId);
+            const fileInput = document.getElementById(fileInputId);
+
+            // Click para abrir selector de archivos
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            // Drag & Drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    onFileSelect(files[0]);
+                }
+            });
+
+            // Input file change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    onFileSelect(e.target.files[0]);
+                }
+            });
+        }
+
+        // Verificar si ambos archivos están listos
+        function checkFilesReady() {
+            const uploadBtn = document.getElementById('uploadFiles');
+            uploadBtn.disabled = !(cursosFile && aulasFile);
+        }
+
+        // Descargar templates
+        async function downloadTemplates() {
+            try {
+                const response = await fetch(`${API_URL}/download_templates`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'templates_asignacion_aulas.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Templates descargados!',
+                        text: 'Completa los archivos Excel y súbelos al sistema',
+                        confirmButtonColor: '#3498db'
+                    });
+                } else {
+                    throw new Error('Error al descargar templates');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron descargar los templates',
+                    confirmButtonColor: '#e74c3c'
+                });
+            }
+        }
+
+        // Subir archivos y optimizar
+        async function uploadAndOptimize() {
+            if (!cursosFile || !aulasFile) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Archivos faltantes',
+                    text: 'Por favor selecciona ambos archivos (cursos y aulas)',
+                    confirmButtonColor: '#f39c12'
+                });
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('uploadFiles').disabled = true;
+
+            try {
+                // Subir archivos
+                const formData = new FormData();
+                formData.append('cursos', cursosFile);
+                formData.append('aulas', aulasFile);
+
+                const uploadResponse = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const uploadResult = await uploadResponse.json();
+
+                if (!uploadResponse.ok) {
+                    throw new Error(uploadResult.error || 'Error al subir archivos');
+                }
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Datos cargados',
+                    text: `Cursos: ${uploadResult.stats.cursos}, Aulas: ${uploadResult.stats.aulas}. Ejecutando optimización...`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                // Ejecutar optimización
+                const optimizeResponse = await fetch(`${API_URL}/optimize`, {
+                    method: 'POST'
+                });
+
+                const optimizeResult = await optimizeResponse.json();
+
+                if (!optimizeResponse.ok) {
+                    throw new Error(optimizeResult.error || 'Error en optimización');
+                }
+
+                // Mostrar resultados
+                displayResults(optimizeResult);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Optimización completada!',
+                    text: `Se generaron ${optimizeResult.solution.length} asignaciones con ${optimizeResult.statistics.conflicts} conflictos`,
+                    confirmButtonColor: '#27ae60'
+                });
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en el proceso',
+                    text: error.message,
+                    confirmButtonColor: '#e74c3c'
+                });
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('uploadFiles').disabled = false;
+            }
+        }
+
+        // Mostrar resultados
+        function displayResults(result) {
+            currentSolution = result.solution;
+            const stats = result.statistics;
+
+            // Actualizar estadísticas
+            document.getElementById('totalAssignments').textContent = stats.total_assignments;
+            document.getElementById('conflictsCount').textContent = stats.conflicts;
+            document.getElementById('bestFitness').textContent = stats.best_fitness;
+            document.getElementById('generations').textContent = stats.generations;
+
+            // Llenar tabla de resultados
+            const tbody = document.querySelector('#resultsTable tbody');
+            tbody.innerHTML = '';
+
+            result.solution.forEach(assignment => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><strong>${assignment.curso_nombre}</strong></td>
+                    <td><span class="badge bg-primary">${assignment.ciclo}</span></td>
+                    <td><span class="badge ${assignment.tipo === 'laboratorio' ? 'bg-info' : 'bg-secondary'}">${assignment.tipo}</span></td>
+                    <td>${assignment.estudiantes}</td>
+                    <td><strong>${assignment.aula_nombre}</strong></td>
+                    <td>${assignment.capacidad}</td>
+                    <td><span class="badge ${assignment.ubicacion === 'Campus' ? 'bg-success' : 'bg-warning'}">${assignment.ubicacion}</span></td>
+                    <td>${assignment.horario}</td>
+                `;
+            });
+
+            // Calcular métricas adicionales
+            const campusCount = result.solution.filter(a => a.ubicacion === 'Campus').length;
+            const externalCount = result.solution.filter(a => a.ubicacion !== 'Campus').length;
+            const labCount = result.solution.filter(a => a.tipo === 'laboratorio').length;
+
+            document.getElementById('campusAulas').textContent = campusCount;
+            document.getElementById('externalAulas').textContent = externalCount;
+            document.getElementById('labAulas').textContent = labCount;
+
+            // Crear gráfico de fitness
+            createFitnessChart(stats.fitness_history);
+
+            // Mostrar secciones de resultados y análisis
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('analysis').style.display = 'block';
+
+            // Scroll a resultados
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Crear gráfico de evolución del fitness
+        function createFitnessChart(fitnessHistory) {
+            const ctx = document.getElementById('fitnessChart').getContext('2d');
+
+            if (fitnessChart) {
+                fitnessChart.destroy();
+            }
+
+            fitnessChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: fitnessHistory.length}, (_, i) => i + 1),
+                    datasets: [{
+                        label: 'Mejor Fitness por Generación',
+                        data: fitnessHistory,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#3498db',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolución del Algoritmo Genético',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Generación'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Fitness'
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    }
+                }
+            });
+
+            // Actualizar barra de progreso
+            document.getElementById('optimizationProgress').style.width = '100%';
+        }
+
+        // Descargar resultados
+        async function downloadResults() {
+            if (!currentSolution) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No hay resultados',
+                    text: 'Primero debes ejecutar la optimización',
+                    confirmButtonColor: '#f39c12'
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/download_result`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        solution: currentSolution
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `asignacion_optimizada_${new Date().getTime()}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Descarga iniciada!',
+                        text: 'El archivo Excel con los resultados se está descargando',
+                        confirmButtonColor: '#27ae60'
+                    });
+                } else {
+                    throw new Error('Error al descargar resultados');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo descargar el archivo de resultados',
+                    confirmButtonColor: '#e74c3c'
+                });
+            }
+        }
+
+        // Smooth scroll para navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
