@@ -6,6 +6,12 @@ Sistema inteligente de asignación de aulas usando **Algoritmos Evolutivos** par
 
 <img width="1761" height="915" alt="Image" src="https://github.com/user-attachments/assets/47063251-d291-4305-ba67-219adf34542e" />   
 
+<img width="1761" height="915" alt="Image" src="https://github.com/user-attachments/assets/d6b890ee-b251-4a2c-b3ae-56b39fdc0b8e" />   
+
+<img width="1708" height="907" alt="Image" src="https://github.com/user-attachments/assets/948d6a72-07a7-431b-86cb-07e20fce9102" />    
+
+<img width="1728" height="555" alt="Image" src="https://github.com/user-attachments/assets/7a3c9c4c-a317-40ea-85f4-c50f6f5a9d6d" />    
+
 ## 📋 Descripción
 
 OptimAulas UNS resuelve automáticamente el problema de asignación de aulas considerando:
