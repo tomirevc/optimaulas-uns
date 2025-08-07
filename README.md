@@ -2,6 +2,10 @@
 
 Sistema inteligente de asignación de aulas usando **Algoritmos Evolutivos** para la carrera de Ingeniería de Sistemas e Informática de la Universidad Nacional del Santa.
 
+<img width="1761" height="915" alt="Image" src="https://github.com/user-attachments/assets/b61796f4-f037-4c8b-b1aa-6739bef193de" />    
+
+<img width="1761" height="915" alt="Image" src="https://github.com/user-attachments/assets/47063251-d291-4305-ba67-219adf34542e" />   
+
 ## 📋 Descripción
 
 OptimAulas UNS resuelve automáticamente el problema de asignación de aulas considerando:
